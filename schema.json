@@ -1,0 +1,39 @@
+{
+  "columns": [
+    {
+      "name": "customer_id",
+      "type": "int",
+      "nullable": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "nullable": false
+    },
+    {
+      "name": "age",
+      "type": "int",
+      "nullable": true
+    },
+    {
+      "name": "balance",
+      "type": "float",
+      "nullable": false
+    },
+    {
+      "name": "premium",
+      "type": "bool",
+      "nullable": false
+    },
+    {
+      "name": "discount",
+      "type": "float",
+      "nullable": false
+    },
+    {
+      "name": "region",
+      "type": "string",
+      "nullable": false
+    }
+  ]
+}
