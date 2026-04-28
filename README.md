@@ -241,8 +241,6 @@ This tool demonstrates several compiler techniques:
 
 ## Limitations
 
-- **DataFrame Variable Name** - Currently only recognizes `df` as the DataFrame variable
-- **Column Access Pattern** - Only detects `df["column"]` syntax, not `df.column`
 - **No Cross-File Analysis** - Analyzes single files independently
 - **No Runtime Values** - Cannot validate against actual data values
 - **No Control Flow** - Doesn't track conditional branches or loops
@@ -252,8 +250,6 @@ This tool demonstrates several compiler techniques:
 Possible extensions:
 
 - **Schema Inference** - Generate draft schemas from code analysis
-- **Multiple DataFrames** - Track multiple DataFrame variables
-- **Method Chaining** - Better support for `df.method().method()` chains
 - **Custom Functions** - Validate user-defined functions
 - **Configuration** - Customize which rules to enable/disable
 - **IDE Integration** - Language server protocol support
