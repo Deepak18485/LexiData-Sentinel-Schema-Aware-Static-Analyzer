@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexiData-Sentinel | Advanced Static Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> LexiData-<span class="highlight">Sentinel</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#upload" class="btn-primary">Try It Now</a></li>
+        </ul>
+    </nav>
+
+    <section id="hero">
+        <div class="hero-content">
+            <h1>Compile-Time <span class="highlight">Validation</span> for Pandas DataFrames</h1>
+            <p>Catch data-related semantic errors before runtime without executing code or loading data.</p>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="glass-card about-card">
+            <h2>Why LexiData-Sentinel?</h2>
+            <p>LexiData-Sentinel performs semantic analysis on Pandas-style DataFrame operations. It uses compiler techniques like AST traversal and symbol tables to detect errors like non-existent columns or type mismatches early.</p>
+            <div class="features">
+                <div class="feature">
+                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444;"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg></div>
+                    <h3>No Data Execution</h3>
+                    <p>Analyzes pure Python code against JSON schemas safely.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #3b82f6;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+                    <h3>Semantic Validation</h3>
+                    <p>Detects type incompatibilities and nullability risks instantly.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f59e0b;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg></div>
+                    <h3>Method Chaining</h3>
+                    <p>Supports dot notation, multiple DataFrames, and chained operations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="upload">
+        <div class="upload-container">
+            <div class="panel code-panel glass-card">
+                <h2>1. Upload Your Files</h2>
+                <form id="analyze-form">
+                    <div class="file-drop-area" id="code-drop">
+                        <span class="fake-btn">Choose Code File (.py)</span>
+                        <span class="file-msg">or drag and drop here</span>
+                        <input class="file-input" type="file" id="code-file" accept=".py" required>
+                    </div>
+                    
+                    <div class="file-drop-area mt-4" id="schema-drop">
+                        <span class="fake-btn">Choose Schema (.json)</span>
+                        <span class="file-msg">or drag and drop here</span>
+                        <input class="file-input" type="file" id="schema-file" accept=".json" required>
+                    </div>
+
+                    <button type="submit" class="btn-glow mt-4" id="analyze-btn">
+                        <span>Analyze Code</span>
+                        <div class="loader hidden" id="loader"></div>
+                    </button>
+                </form>
+            </div>
+
+            <div class="panel results-panel glass-card">
+                <h2>2. Analysis Results</h2>
+                <div id="results-content">
+                    <div class="placeholder">
+                        <p>Upload your files and click Analyze to see compiler diagnostics here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Built for the advanced developer workflow. &copy; 2026 LexiData-Sentinel.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
