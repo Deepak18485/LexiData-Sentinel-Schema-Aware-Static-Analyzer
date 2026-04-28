@@ -1,6 +1,18 @@
 # Valid example with no errors
 # This demonstrates correct usage of DataFrame operations
 
+import pandas as pd
+
+df = pd.DataFrame({
+    "balance": [500.0, 1200.5, 800.75, 1500.0],
+    "age": [25, 40, 30, 28],
+    "premium": [True, False, True, True],
+    "region": ["North", "South", "East", "West"],
+    "name": ["Alice", "Bob", "Charlie", "David"],
+    "customer_id": [101, 102, 103, 104],
+    "discount": [0.1, 0.05, 0.2, 0.15]
+})
+
 # Calculate adjusted balance for all customers
 df["adjusted_balance"] = df["balance"] * 1.05
 

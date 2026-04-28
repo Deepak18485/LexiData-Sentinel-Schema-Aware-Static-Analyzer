@@ -12,7 +12,7 @@ from diagnostics import DiagnosticCollector
 from schema_loader import MultiDataFrameSchema, DataFrameSchema
 from analyzer import EnhancedSemanticAnalyzer
 from optimizer import EnhancedDeadColumnOptimizer
-from ast_utils import detect_dataframes_in_code
+from ast_utils import detect_dataframes_in_code, DataFrameDetector
 
 
 class LexiDataSentinelEnhanced:
@@ -37,7 +37,7 @@ class LexiDataSentinelEnhanced:
     def run(self) -> bool:
         """Execute the complete analysis pipeline."""
         print("=" * 70)
-        print("LexiData-Sentinel Enhanced: Advanced DataFrame Static Analyzer")
+        print("LexiData-Sentinel:Schema-Aware-Static-Analyzer")
         print("=" * 70)
         print()
         
@@ -46,7 +46,6 @@ class LexiDataSentinelEnhanced:
         source_code = self._load_source()
         if source_code is None:
             return False
-        
         print(f"  ✓ Loaded {len(source_code)} characters from {self.source_path}")
         
         # Phase 2: Parse to AST
@@ -54,22 +53,25 @@ class LexiDataSentinelEnhanced:
         tree = self._parse_to_ast(source_code)
         if tree is None:
             return False
-        
         print(f"  ✓ Successfully parsed AST")
         
         # Phase 3: Auto-detect DataFrames (if enabled)
         df_tracker = None
         if self.auto_detect:
             print("[Phase 3] Auto-detecting DataFrame variables...")
-            df_tracker = detect_dataframes_in_code(source_code)
+            detector = DataFrameDetector()
+            detector.visit(tree)
+            df_tracker = detector.tracker
+            df_tracker._detector = detector  # attach so _load_schema can access inferred schemas
+
             detected_dfs = df_tracker.get_all_dataframes()
             if detected_dfs:
-                print(f"  ✓ Detected {len(detected_dfs)} DataFrame variable(s): {', '.join(detected_dfs)}")
+                print(f"  ✓ Detected {len(detected_dfs)} DataFrame variable(s): {', '.join(sorted(detected_dfs))}")
             else:
                 print(f"  ⚠ No DataFrame variables auto-detected (will use schema defaults)")
-            
+
             if self.verbose:
-                for df_name in detected_dfs:
+                for df_name in sorted(detected_dfs):
                     print(f"      - {df_name}")
         
         # Phase 4: Load schema
@@ -140,29 +142,34 @@ class LexiDataSentinelEnhanced:
     def _load_schema(self, df_tracker) -> MultiDataFrameSchema:
         """Load schema from JSON file."""
         try:
-            # Try to load as multi-DataFrame schema
             schema = MultiDataFrameSchema.from_multi_json(self.schema_path)
-            
-            # If we have detected DataFrames, add them to schema if not present
-            if df_tracker:
-                for df_name in df_tracker.get_all_dataframes():
-                    if not schema.has_dataframe(df_name) and df_name not in schema.schemas:
-                        # Create empty schema for detected DataFrame
-                        empty_schema = DataFrameSchema(df_name)
-                        schema.add_dataframe(df_name, empty_schema)
-                        if self.verbose:
-                            print(f"  ℹ Created empty schema for detected DataFrame '{df_name}'")
-            
+
+            print("  [DEBUG] Checking df_tracker...")
+            if df_tracker and hasattr(df_tracker, '_detector'):
+                MultiDataFrameSchema.register_inferred(
+                    df_tracker._detector.inferred_schemas, schema
+                )
+                print("  [DEBUG] register_inferred done")
+                if self.verbose:
+                    for df_name in df_tracker._detector.inferred_schemas:
+                        if schema.has_dataframe(df_name):
+                            print(f"  ℹ Auto-registered '{df_name}' from source code")
+            else:
+                print("  [DEBUG] df_tracker has no _detector attribute")
+
+            print("  [DEBUG] _load_schema complete")
             return schema
-            
+
         except FileNotFoundError:
             self.diagnostics.error(f"Schema file not found: {self.schema_path}")
             return None
         except Exception as e:
-            # Try backward-compatible single DataFrame format
+            print(f"  [DEBUG] Exception caught: {type(e).__name__}: {e}")
             try:
+                print("  [DEBUG] Trying from_json fallback...")
                 return MultiDataFrameSchema.from_json(self.schema_path)
-            except:
+            except Exception as e2:
+                print(f"  [DEBUG] Fallback also failed: {e2}")
                 self.diagnostics.error(f"Error loading schema: {e}")
                 return None
     
@@ -221,7 +228,6 @@ Example:
     
     args = parser.parse_args()
     
-    # Run analysis
     sentinel = LexiDataSentinelEnhanced(
         args.source,
         args.schema,

@@ -2,9 +2,27 @@
 # This demonstrates the analyzer working with various code patterns
 
 # Multiple DataFrame variables
-customers = load_data("customers.csv")
-orders = load_data("orders.csv")
-products = load_data("products.csv")
+import pandas as pd
+
+# Customers DataFrame
+customers = pd.DataFrame({
+    "name": ["Alice", "Bob", "Charlie", "David"],
+    "age": [25, None, 30, 28],  # nullable for warning case
+    "balance": [500.0, 1200.5, 800.75, 1500.0]
+})
+
+# Orders DataFrame
+orders = pd.DataFrame({
+    "amount": [100.0, 250.5, 300.0, 150.75],
+    "total": [110.0, 275.5, 330.0, 165.75],
+    "date": ["2024-02-01", "2023-12-15", "2024-03-10", "2024-01-20"]
+})
+
+# Products DataFrame
+products = pd.DataFrame({
+    "price": [50.0, 120.0, 75.5, 200.0],
+    "category": ["Electronics", "Clothing", "Books", "Furniture"]
+})
 
 # Dot notation access
 customer_names = customers.name

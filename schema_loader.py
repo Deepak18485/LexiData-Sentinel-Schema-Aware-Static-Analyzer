@@ -1,7 +1,3 @@
-"""
-LexiData-Sentinel Enhanced: Multi-DataFrame Schema Loader
-Supports multiple DataFrames with separate schemas for each.
-"""
 
 import json
 from typing import Dict, Optional, Set
@@ -122,6 +118,58 @@ class MultiDataFrameSchema:
         
         return multi_schema
 
+    @classmethod
+    def register_inferred(cls, inferred_schemas: dict, existing: 'MultiDataFrameSchema') -> None:
+        """
+        Register auto-detected DataFrames into an existing MultiDataFrameSchema.
+        JSON-defined schemas always take priority — skips any df already defined.
+
+        Args:
+            inferred_schemas: From DataFrameDetector.inferred_schemas
+                            Format: {df_name: {col_name: {"type": str, "nullable": bool}}}
+            existing: The already-loaded MultiDataFrameSchema to add into
+        """
+        for df_name, columns in inferred_schemas.items():
+            if existing.has_dataframe(df_name):
+                continue  # JSON definition takes priority
+
+            schema = DataFrameSchema(df_name)
+            for col_name, col_info in columns.items():
+                data_type = DataType.from_string(col_info["type"])
+                nullable = col_info["nullable"]
+                symbol = ColumnSymbol(col_name, data_type, nullable=nullable, is_derived=False)
+                schema.columns[col_name] = symbol
+                schema._original_columns.add(col_name)
+
+            existing.add_dataframe(df_name, schema)
+
+    @classmethod
+    def from_detected(cls, inferred_schemas: dict, existing: 'MultiDataFrameSchema') -> None:
+        """
+        Register auto-detected DataFrames into an existing MultiDataFrameSchema.
+        Skips DataFrames already defined in the JSON schema.
+        
+        Args:
+            inferred_schemas: Dict from DataFrameDetector.inferred_schemas
+                            Format: {df_name: {col_name: {"type": str, "nullable": bool}}}
+            existing: The already-loaded MultiDataFrameSchema to add into
+        """
+        for df_name, columns in inferred_schemas.items():
+            # JSON-defined schemas take priority — never overwrite them
+            if existing.has_dataframe(df_name):
+                continue
+
+            schema = DataFrameSchema(df_name)
+            for col_name, col_info in columns.items():
+                data_type = DataType.from_string(col_info["type"])
+                nullable = col_info["nullable"]
+                symbol = ColumnSymbol(col_name, data_type, nullable=nullable, is_derived=False)
+                schema.columns[col_name] = symbol
+                schema._original_columns.add(col_name)
+
+            existing.add_dataframe(df_name, schema)
+            print(f"[AUTO] Registered DataFrame '{df_name}' "
+                f"with {len(schema.columns)} inferred column(s)")
 
 class DataFrameSchema:
     """
