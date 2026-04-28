@@ -1,7 +1,5 @@
-"""
-LexiData-Sentinel Enhanced: Advanced AST Utilities
-Supports general DataFrame patterns, multiple variables, dot notation, and method chaining.
-"""
+"""LexiData-Sentinel Enhanced: Advanced AST Utilities
+Supports general DataFrame patterns, multiple variables, dot notation, and method chaining."""
 
 import ast
 from typing import Optional, Tuple, List, Set, Dict
@@ -202,6 +200,17 @@ def is_dataframe_subscript(node: ast.AST, df_tracker: Optional[DataFrameTracker]
 
 
 def is_dataframe_attribute(node: ast.AST, df_tracker: Optional[DataFrameTracker] = None) -> bool:
+    """
+    Check if a node represents DataFrame column access via dot notation.
+    Patterns: df.column, data.price, customers.age
+    
+    Args:
+        node: AST node to check
+        df_tracker: Optional tracker of known DataFrame variables
+    
+    Returns:
+        True if node is DataFrame attribute access
+    """
     if not isinstance(node, ast.Attribute):
         return False
     if not isinstance(node.value, ast.Name):

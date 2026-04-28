@@ -1,7 +1,4 @@
-"""
-LexiData-Sentinel: Diagnostics Module
-Handles compile-time error, warning, and info messages.
-"""
+""" LexiData-Sentinel: Diagnostics Module Handles compile-time error, warning, and info messages."""
 
 from enum import Enum
 from typing import Optional
